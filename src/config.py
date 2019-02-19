@@ -1,0 +1,4 @@
+import os
+
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACESS_KEY_ID", "AKIAJC7GZHB3VOFXRFDA")
+AWS_SECRET_KEY_ID = os.environ.get("AWS_SECRET_KEY_ID", "6Pl7YqvCbm6w277b89Whg5jvDvv+bC0yrHoRATZU")
