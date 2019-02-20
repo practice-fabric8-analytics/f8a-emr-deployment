@@ -3,6 +3,7 @@ import logging
 
 from flask import Flask, request, Blueprint
 from flask_restful import Api, Resource
+from rudra.deployments.pypi_emr import PyPiEMR
 
 import src.config as config
 from src.amazon_services import AmazonServices, AmazonEmr
@@ -15,6 +16,9 @@ app = Flask(__name__)
 api_bp = Blueprint('api',__name__)
 api = Api(api_bp)
 
+emr_instance = {
+
+}
 
 class AliveProbe(Resource):
     def get(self):
