@@ -16,7 +16,7 @@ docker-build:
 	docker build --no-cache -t $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG) -f $(DOCKERFILE) .
 
 docker-build-test: docker-build
-
+    docker build --no-cache -t emr-deployment-tests -f Dockerfile.tests .
 
 fast-docker-build:
 	docker build -t $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG) -f $(DOCKERFILE) .
