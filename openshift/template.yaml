@@ -37,7 +37,7 @@ objects:
             value: "900"
           - name: FLASK_LOGGING_LEVEL
             value: ${FLASK_LOGGING_LEVEL}
-          name: f8a-pypi-insights
+          name: f8a-emr-deployment
           image: "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_TAG}"
           ports:
           - containerPort: 6006
