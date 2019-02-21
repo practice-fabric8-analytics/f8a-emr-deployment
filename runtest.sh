@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TEST_IMAGE_NAME='emr-deployment-test'
+TEST_IMAGE_NAME='emr-deployment-tests'
 
 gc() {
     docker rmi -f $(make get-image-name)
