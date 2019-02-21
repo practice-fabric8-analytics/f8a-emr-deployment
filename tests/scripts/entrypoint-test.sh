@@ -21,5 +21,5 @@ echo "*****************************************"
 echo "*** Unit tests ***"
 echo "*****************************************"
 
-pytest --cov=/src/ --cov-report term-missing --cov-fail-under=$COVERAGE_THRESHOLD -vv /tests/unit_tests/
+pytest --cov=/src/ --cov-report term-missing --cov-fail-under=$COVERAGE_THRESHOLD -vv /tests/
 codecov --token=36977e37-70fd-4b77-8e4c-57a6762f948f
