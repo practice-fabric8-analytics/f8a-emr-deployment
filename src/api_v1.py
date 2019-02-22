@@ -40,7 +40,6 @@ class ReadinessProbe(Resource):
 #     def post(self):
 #         ecosystem = request.form.get('ecosystem')
 #         model = request.form.get('model')
-#         run_emr = AmazonEmr(config.AWS_ACCESS_KEY_ID, config.AWS_SECRET_KEY_ID, 'us-east-1')
 #         run_emr.connect()
 #         resp = run_emr.run_training_job(model, ecosystem)
 #         return resp, 200
