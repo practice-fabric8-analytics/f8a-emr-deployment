@@ -2,11 +2,6 @@ FROM quay.io/openshiftio/rhel-base-python3:latest
 
 LABEL maintainer="Sunil Samal <ssamal@redhat.com>"
 
-RUN yum install -y epel-release &&\
-    yum install -y gcc-c++ git python34-pip python34-requests httpd httpd-devel python34-devel &&\
-    yum clean all
-
-
 COPY ./requirements.txt /requirements.txt
 
 RUN pip3 install -r requirements.txt
