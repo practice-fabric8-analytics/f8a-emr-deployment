@@ -9,6 +9,8 @@ RUN yum install -y epel-release &&\
 
 COPY ./requirements.txt /requirements.txt
 
+RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-rudra#egg=rudra
+
 RUN pip3 install -r requirements.txt
 
 COPY ./entrypoint.sh /bin/entrypoint.sh
