@@ -3,12 +3,15 @@
 import daiquiri
 import logging
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, request
 from flask_restful import Api, Resource
-# from rudra.deployments.pypi_emr import PyPiEMR
 
-# import src.config as config
-# from src.amazon_services import AmazonServices, AmazonEmr
+import src.config as config
+from src.exceptions import HTTPError
+from rudra.utils.validation import check_field_exists
+from rudra.deployments.emrs.pypi_emr import PyPiEMR
+from rudra.deployments.emrs.maven_emr import MavenEMR
+from rudra.deployments.emrs.npm_emr import NpmEMR
 
 
 daiquiri.setup(level=logging.DEBUG)
@@ -17,6 +20,12 @@ _logger = daiquiri.getLogger(__name__)
 app = Flask(__name__)
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
+
+emr_instances = {
+    'maven': MavenEMR,
+    'pypi': PyPiEMR,
+    'npm': NpmEMR
+}
 
 
 class AliveProbe(Resource):
@@ -36,18 +45,33 @@ class ReadinessProbe(Resource):
         return {"status": "ok"}
 
 
-# class RunTrainingJob(Resource):
-#     def post(self):
-#         ecosystem = request.form.get('ecosystem')
-#         model = request.form.get('model')
-#         run_emr.connect()
-#         resp = run_emr.run_training_job(model, ecosystem)
-#         return resp, 200
+class RunTrainingJob(Resource):
+    """API for retraining purpose."""
+
+    def post(self):
+        """POST call for initiating retraining of models."""
+        required_fields = ["data_version", "bucket_name", "github_repo", "ecosystem"]
+        input_data = request.get_json()
+        missing_fileds = check_field_exists(input_data, required_fields)
+        if missing_fileds:
+            raise HTTPError(400, "These field(s) {} are missing from input "
+                                 "data".format(missing_fileds))
+        if not input_data:
+            raise HTTPError(400, "Expected JSON request")
+        if type(input_data) != dict:
+            raise HTTPError(400, "Expected dict of input parameters")
+        input_data['environment'] = config.DEPLOYMENT_PREFIX
+        ecosystem = input_data.get('ecosystem')
+        emr_instance = emr_instances.get(ecosystem)
+        if emr_instance:
+            emr_instance = emr_instance()
+            status = emr_instance.run_job(input_data)
+        return status
 
 
 api.add_resource(ReadinessProbe, '/readiness')
 api.add_resource(AliveProbe, '/liveness')
-# api.add_resource(RunTrainingJob, '/runjob', endpoint='runjob')
+api.add_resource(RunTrainingJob, '/runjob', endpoint='runjob')
 app.register_blueprint(api_bp, url_prefix='/api/v1')
 
 if __name__ == '__main__':
