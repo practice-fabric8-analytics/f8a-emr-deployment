@@ -40,7 +40,8 @@ class AliveProbe(Resource):
 class ReadinessProbe(Resource):
     """Check readiness probe."""
 
-    def get(self):
+    @staticmethod
+    def get():
         """GET call to check readiness."""
         return {"status": "ok"}
 
@@ -48,7 +49,8 @@ class ReadinessProbe(Resource):
 class RunTrainingJob(Resource):
     """API for retraining purpose."""
 
-    def post(self):
+    @staticmethod
+    def post():
         """POST call for initiating retraining of models."""
         required_fields = ["data_version", "bucket_name", "github_repo", "ecosystem"]
         input_data = request.get_json()
