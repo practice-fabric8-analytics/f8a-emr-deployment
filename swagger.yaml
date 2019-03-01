@@ -1,0 +1,52 @@
+swagger: "2.0"
+info:
+  description: "API to invoke training job"
+  version: "0.1.0"
+  title: "EMR deployment service"
+  license:
+    name: "GPLv3"
+host: "localhost:6006"
+basePath: "/v1"
+schemes:
+- "http"
+paths:
+  /runjob:
+    post:
+      tags:
+      - "EMR"
+      summary: "Invoke retraining job"
+      description: ""
+      operationId: "listPlugins"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/EMR"
+definitions:
+  EMR:
+    type: "object"
+    properties:
+      JobFlowId:
+        type: "string"
+      ResponseMetadata:
+        type: "object"
+        properties:
+          RequestId:
+            type: "string"
+          HTTPStatusCode:
+            type: "string"
+          HTTPHeaders:
+            type: "object"
+            properties:
+              x-amzn-requestid:
+                type: "string"
+              content-type:
+                type: "string"
+              content-length:
+                type: "string"
+              date:
+                type: "string"
+          RetryAttempts:
+            type: "integer"
