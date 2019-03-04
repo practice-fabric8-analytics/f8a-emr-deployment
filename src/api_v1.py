@@ -8,6 +8,7 @@ from flask_restful import Api, Resource
 
 import src.config as config
 from src.exceptions import HTTPError
+from src.trained_model_details import trained_model_details
 from rudra.utils.validation import check_field_exists
 from rudra.deployments.emrs.pypi_emr import PyPiEMR
 from rudra.deployments.emrs.maven_emr import MavenEMR
@@ -54,10 +55,10 @@ class RunTrainingJob(Resource):
         """POST call for initiating retraining of models."""
         required_fields = ["data_version", "bucket_name", "github_repo", "ecosystem"]
         input_data = request.get_json()
-        missing_fileds = check_field_exists(input_data, required_fields)
-        if missing_fileds:
+        missing_fields = check_field_exists(input_data, required_fields)
+        if missing_fields:
             raise HTTPError(400, "These field(s) {} are missing from input "
-                                 "data".format(missing_fileds))
+                                 "data".format(missing_fields))
         if not input_data:
             raise HTTPError(400, "Expected JSON request")
         if type(input_data) != dict:
@@ -71,9 +72,32 @@ class RunTrainingJob(Resource):
         return status
 
 
+class TrainedModelDetails(Resource):
+    """Get call for fetching trained model details."""
+
+    @staticmethod
+    def post():
+        """POST call to fetch model details."""
+        required_fields = ["bucket_name", "ecosystem"]
+        input_data = request.get_json()
+        missing_fields = check_field_exists(input_data, required_fields)
+        if missing_fields:
+            raise HTTPError(400, "These field(s) {} are missing from input "
+                                 "data".format(missing_fields))
+        if not input_data:
+            raise HTTPError(400, "Expected JSON request")
+        if type(input_data) != dict:
+            raise HTTPError(400, "Expected dict of input parameters")
+        bucket = input_data['bucket_name']
+        ecosystem = input_data['ecosystem']
+        output = trained_model_details(bucket, ecosystem)
+        return output
+
+
 api.add_resource(ReadinessProbe, '/readiness')
 api.add_resource(AliveProbe, '/liveness')
 api.add_resource(RunTrainingJob, '/runjob', endpoint='runjob')
+api.add_resource(TrainedModelDetails, '/versions', endpoint='versions')
 app.register_blueprint(api_bp, url_prefix='/api/v1')
 
 if __name__ == '__main__':
