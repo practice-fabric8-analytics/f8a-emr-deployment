@@ -2,6 +2,7 @@
 
 import daiquiri
 import logging
+import os
 
 from flask import Flask, Blueprint, request
 from flask_restful import Api, Resource
@@ -16,7 +17,7 @@ from rudra.deployments.emr_scripts.maven_emr import MavenEMR
 from rudra.deployments.emr_scripts.npm_emr import NpmEMR
 
 
-daiquiri.setup(level=logging.DEBUG)
+daiquiri.setup(level=os.environ.get('FLASK_LOGGING_LEVEL', logging.INFO))
 _logger = daiquiri.getLogger(__name__)
 
 app = Flask(__name__)
@@ -108,4 +109,4 @@ api.add_resource(TrainedModelDetails, '/versions', endpoint='versions')
 app.register_blueprint(api_bp, url_prefix='/api/v1')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
