@@ -8,6 +8,7 @@ from flask_restful import Api, Resource
 
 import src.config as config
 from src.exceptions import HTTPError
+from fabric8a_auth.auth import login_required
 from src.trained_model_details import trained_model_details
 from rudra.utils.validation import check_field_exists
 from rudra.deployments.emrs.pypi_emr import PyPiEMR
@@ -50,6 +51,8 @@ class ReadinessProbe(Resource):
 class RunTrainingJob(Resource):
     """API for retraining purpose."""
 
+    method_decorators = [login_required]
+
     @staticmethod
     def post():
         """POST call for initiating retraining of models."""
@@ -74,6 +77,8 @@ class RunTrainingJob(Resource):
 
 class TrainedModelDetails(Resource):
     """Get call for fetching trained model details."""
+
+    method_decorators = [login_required]
 
     @staticmethod
     def post():
