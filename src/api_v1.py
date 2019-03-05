@@ -11,9 +11,9 @@ from src.exceptions import HTTPError
 from fabric8a_auth.auth import login_required
 from src.trained_model_details import trained_model_details
 from rudra.utils.validation import check_field_exists
-from rudra.deployments.emrs.pypi_emr import PyPiEMR
-from rudra.deployments.emrs.maven_emr import MavenEMR
-from rudra.deployments.emrs.npm_emr import NpmEMR
+from rudra.deployments.emr_scripts.pypi_emr import PyPiEMR
+from rudra.deployments.emr_scripts.maven_emr import MavenEMR
+from rudra.deployments.emr_scripts.npm_emr import NpmEMR
 
 
 daiquiri.setup(level=logging.DEBUG)
@@ -72,6 +72,8 @@ class RunTrainingJob(Resource):
         if emr_instance:
             emr_instance = emr_instance()
             status = emr_instance.run_job(input_data)
+        else:
+            raise HTTPError(400, "Ecosystem {} not supported yet.".format(ecosystem))
         return status
 
 
@@ -106,4 +108,4 @@ api.add_resource(TrainedModelDetails, '/versions', endpoint='versions')
 app.register_blueprint(api_bp, url_prefix='/api/v1')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
