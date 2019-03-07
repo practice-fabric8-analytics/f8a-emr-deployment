@@ -6,10 +6,12 @@ import os
 
 from flask import Flask, Blueprint, request
 from flask_restful import Api, Resource
+from flask.json import jsonify
 
 import src.config as config
 from src.exceptions import HTTPError
 from fabric8a_auth.auth import login_required
+from fabric8a_auth.auth import AuthError
 from src.trained_model_details import trained_model_details
 from rudra.utils.validation import check_field_exists
 from rudra.deployments.emr_scripts.pypi_emr import PyPiEMR
@@ -107,6 +109,13 @@ api.add_resource(AliveProbe, '/liveness')
 api.add_resource(RunTrainingJob, '/runjob', endpoint='runjob')
 api.add_resource(TrainedModelDetails, '/versions', endpoint='versions')
 app.register_blueprint(api_bp, url_prefix='/api/v1')
+
+
+@api_bp.errorhandler(AuthError)
+def api_401_handler(err):
+    """Handle AuthError Exceptions."""
+    return jsonify(error=err.error), err.status_code
+
 
 if __name__ == '__main__':
     app.run(debug=True)
