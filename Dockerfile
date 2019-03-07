@@ -2,8 +2,6 @@ FROM centos:7
 
 LABEL maintainer="Sunil Samal <ssamal@redhat.com>"
 
-ENV F8A_AUTH_VERSION=5211e23
-
 RUN yum install -y epel-release &&\
     yum install -y gcc-c++ git python34-pip python34-requests httpd httpd-devel python34-devel &&\
     yum clean all
@@ -11,7 +9,7 @@ RUN yum install -y epel-release &&\
 
 COPY ./requirements.txt /requirements.txt
 
-RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-auth.git@${F8A_AUTH_VERSION}
+RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-auth.git
 
 RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-rudra#egg=rudra
 

@@ -2,8 +2,6 @@ FROM quay.io/openshiftio/fabric8-analytics-f8a-emr-deployment:latest
 
 LABEL MAINTAINER="Sunil Samal <ssamal@redhat.com>"
 
-ENV F8A_AUTH_VERSION=5211e23
-
 # --------------------------------------------------------------------------------------------------
 # copy testing source code and scripts into root dir /
 # --------------------------------------------------------------------------------------------------
@@ -14,7 +12,7 @@ RUN chmod 0777 /entrypoint-test.sh
 
 ENV PYTHONPATH=/
 
-RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-auth.git@${F8A_AUTH_VERSION}
+RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-auth.git
 
 RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-rudra#egg=rudra
 
