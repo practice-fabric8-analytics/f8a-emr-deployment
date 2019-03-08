@@ -22,9 +22,16 @@ from rudra.deployments.emr_scripts.npm_emr import NpmEMR
 daiquiri.setup(level=os.environ.get('FLASK_LOGGING_LEVEL', logging.INFO))
 _logger = daiquiri.getLogger(__name__)
 
+errors = {
+        'AuthError': {
+                         'status': 401,
+                         'message': 'Authentication failed',
+                         'some_description': 'Authentication failed'
+                     }}
+
 app = Flask(__name__)
 api_bp = Blueprint('api', __name__)
-api = Api(api_bp)
+api = Api(api_bp, errors=errors)
 
 emr_instances = {
     'maven': MavenEMR,
