@@ -4,9 +4,9 @@ import daiquiri
 import logging
 import os
 
-from flask import Flask, Blueprint, request
-from flask_restful import Api, Resource
+from flask import Flask, request
 from flask.json import jsonify
+from flask_cors import CORS
 
 import src.config as config
 from src.exceptions import HTTPError
@@ -22,16 +22,9 @@ from rudra.deployments.emr_scripts.npm_emr import NpmEMR
 daiquiri.setup(level=os.environ.get('FLASK_LOGGING_LEVEL', logging.INFO))
 _logger = daiquiri.getLogger(__name__)
 
-errors = {
-        'AuthError': {
-                         'status': 401,
-                         'message': 'Authentication failed',
-                         'some_description': 'Authentication failed'
-                     }}
 
 app = Flask(__name__)
-api_bp = Blueprint('api', __name__)
-api = Api(api_bp, errors=errors)
+CORS(app)
 
 emr_instances = {
     'maven': MavenEMR,
@@ -40,87 +33,74 @@ emr_instances = {
 }
 
 
-class AliveProbe(Resource):
-    """Check alive probe."""
-
-    def get(self):
-        """GET call to check liveness."""
-        _logger.info("alive:yes")
-        return {"alive": "yes"}
+@app.route('/api/v1/readiness')
+def readiness():
+    """Readiness probe."""
+    return jsonify({}), 200
 
 
-class ReadinessProbe(Resource):
-    """Check readiness probe."""
-
-    @staticmethod
-    def get():
-        """GET call to check readiness."""
-        return {"status": "ok"}
+@app.route('/api/v1/liveness')
+def liveness():
+    """Liveness probe."""
+    return jsonify({}), 200
 
 
-class RunTrainingJob(Resource):
-    """API for retraining purpose."""
-
-    method_decorators = [login_required]
-
-    @staticmethod
-    def post():
-        """POST call for initiating retraining of models."""
-        required_fields = ["data_version", "bucket_name", "github_repo", "ecosystem"]
-        input_data = request.get_json()
-        missing_fields = check_field_exists(input_data, required_fields)
-        if missing_fields:
-            raise HTTPError(400, "These field(s) {} are missing from input "
-                                 "data".format(missing_fields))
-        if not input_data:
-            raise HTTPError(400, "Expected JSON request")
-        if type(input_data) != dict:
-            raise HTTPError(400, "Expected dict of input parameters")
-        input_data['environment'] = config.DEPLOYMENT_PREFIX
-        ecosystem = input_data.get('ecosystem')
-        emr_instance = emr_instances.get(ecosystem)
-        if emr_instance:
-            emr_instance = emr_instance()
-            status = emr_instance.run_job(input_data)
-        else:
-            raise HTTPError(400, "Ecosystem {} not supported yet.".format(ecosystem))
-        return status
+@app.route('/api/v1/runjob', methods=['POST'])
+@login_required
+def run_training_job():
+    """POST call for initiating retraining of models."""
+    required_fields = ["data_version", "bucket_name", "github_repo", "ecosystem"]
+    input_data = request.get_json()
+    missing_fields = check_field_exists(input_data, required_fields)
+    if missing_fields:
+        raise HTTPError(400, "These field(s) {} are missing from input "
+                             "data".format(missing_fields))
+    if not input_data:
+        raise HTTPError(400, "Expected JSON request")
+    if type(input_data) != dict:
+        raise HTTPError(400, "Expected dict of input parameters")
+    input_data['environment'] = config.DEPLOYMENT_PREFIX
+    ecosystem = input_data.get('ecosystem')
+    emr_instance = emr_instances.get(ecosystem)
+    if emr_instance:
+        emr_instance = emr_instance()
+        status = emr_instance.run_job(input_data)
+    else:
+        raise HTTPError(400, "Ecosystem {} not supported yet.".format(ecosystem))
+    return status
 
 
-class TrainedModelDetails(Resource):
-    """Get call for fetching trained model details."""
-
-    method_decorators = [login_required]
-
-    @staticmethod
-    def post():
-        """POST call to fetch model details."""
-        required_fields = ["bucket_name", "ecosystem"]
-        input_data = request.get_json()
-        missing_fields = check_field_exists(input_data, required_fields)
-        if missing_fields:
-            raise HTTPError(400, "These field(s) {} are missing from input "
-                                 "data".format(missing_fields))
-        if not input_data:
-            raise HTTPError(400, "Expected JSON request")
-        if type(input_data) != dict:
-            raise HTTPError(400, "Expected dict of input parameters")
-        bucket = input_data['bucket_name']
-        ecosystem = input_data['ecosystem']
-        output = trained_model_details(bucket, ecosystem)
-        return output
+@app.route('/api/v1/versions', methods=['POST'])
+# @login_required
+def trained_model_details():
+    """POST call to fetch model details."""
+    required_fields = ["bucket_name", "ecosystem"]
+    input_data = request.get_json()
+    missing_fields = check_field_exists(input_data, required_fields)
+    if missing_fields:
+        raise HTTPError(400, "These field(s) {} are missing from input "
+                             "data".format(missing_fields))
+    if not input_data:
+        raise HTTPError(400, "Expected JSON request")
+    if type(input_data) != dict:
+        raise HTTPError(400, "Expected dict of input parameters")
+    bucket = input_data['bucket_name']
+    ecosystem = input_data['ecosystem']
+    output = trained_model_details(bucket, ecosystem)
+    return output
 
 
-api.add_resource(ReadinessProbe, '/readiness')
-api.add_resource(AliveProbe, '/liveness')
-api.add_resource(RunTrainingJob, '/runjob', endpoint='runjob')
-api.add_resource(TrainedModelDetails, '/versions', endpoint='versions')
-app.register_blueprint(api_bp, url_prefix='/api/v1')
+@app.errorhandler(HTTPError)
+def handle_error(e):  # pragma: no cover
+    """Handle http error response."""
+    return jsonify({
+        "error": e.error
+    }), e.status_code
 
 
 @app.errorhandler(AuthError)
 def api_401_handler(err):
-    """Handle AuthError Exceptions."""
+    """Handle AuthError exceptions."""
     return jsonify(error=err.error), err.status_code
 
 
