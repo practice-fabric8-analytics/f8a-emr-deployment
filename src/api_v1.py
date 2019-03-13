@@ -71,8 +71,8 @@ def run_training_job():
 
 
 @app.route('/api/v1/versions', methods=['POST'])
-# @login_required
-def trained_model_details():
+@login_required
+def version_details():
     """POST call to fetch model details."""
     required_fields = ["bucket_name", "ecosystem"]
     input_data = request.get_json()
