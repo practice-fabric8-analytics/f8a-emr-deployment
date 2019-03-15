@@ -14,4 +14,4 @@ def test_heart_beat_endpoint(client):
     assert response.status_code == 200
     json_data = get_json_from_response(response)
     assert "status" in json_data
-    assert json_data["status"] == "ok"
+    assert json_data["status"] == "ready"
