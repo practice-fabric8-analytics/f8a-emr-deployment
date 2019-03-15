@@ -22,4 +22,4 @@ echo "*** Unit tests ***"
 echo "*****************************************"
 
 pytest --cov=/src/ --cov-report term-missing --cov-fail-under=$COVERAGE_THRESHOLD -vv /tests/
-codecov --token=36977e37-70fd-4b77-8e4c-57a6762f948f
+codecov --token=4cae7f0b-5a20-49a8-a824-a4acd77f9ea1
