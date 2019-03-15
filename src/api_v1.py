@@ -36,7 +36,7 @@ emr_instances = {
 @app.route('/api/v1/readiness')
 def readiness():
     """Readiness probe."""
-    return jsonify({}), 200
+    return jsonify({"status": "ready"}), 200
 
 
 @app.route('/api/v1/liveness')
