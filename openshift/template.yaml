@@ -43,6 +43,11 @@ objects:
               secretKeyRef:
                 key: s3-secret-access-key
                 name: aws
+          - name: GITHUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                key: github_token
+                name: github
           - name: FABRIC8_ANALYTICS_JWT_AUDIENCE
             value: "fabric8-online-platform,openshiftio-public,https://prod-preview.openshift.io,https://openshift.io"
           - name: OSIO_AUTH_URL
