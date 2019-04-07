@@ -67,7 +67,7 @@ def run_training_job():
         status = emr_instance.run_job(input_data)
     else:
         raise HTTPError(400, "Ecosystem {} not supported yet.".format(ecosystem))
-    return status
+    return jsonify(status), 200
 
 
 @app.route('/api/v1/versions', methods=['POST'])
@@ -87,7 +87,7 @@ def version_details():
     bucket = input_data['bucket_name']
     ecosystem = input_data['ecosystem']
     output = trained_model_details(bucket, ecosystem)
-    return output
+    return jsonify(output), 200
 
 
 @app.errorhandler(HTTPError)
