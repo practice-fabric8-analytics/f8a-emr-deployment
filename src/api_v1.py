@@ -11,7 +11,6 @@ from flask_cors import CORS
 import src.config as config
 from src.exceptions import HTTPError
 from fabric8a_auth.auth import AuthError
-from fabric8a_auth.auth import login_required
 from src.trained_model_details import trained_model_details
 from rudra.utils.validation import check_field_exists
 from rudra.deployments.emr_scripts.pypi_emr import PyPiEMR
