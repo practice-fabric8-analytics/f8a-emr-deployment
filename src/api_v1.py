@@ -11,7 +11,6 @@ from flask_cors import CORS
 import src.config as config
 from src.exceptions import HTTPError
 from fabric8a_auth.auth import AuthError
-from fabric8a_auth.auth import login_required
 from src.trained_model_details import trained_model_details
 from rudra.utils.validation import check_field_exists
 from rudra.deployments.emr_scripts.pypi_emr import PyPiEMR
@@ -46,7 +45,6 @@ def liveness():
 
 
 @app.route('/api/v1/runjob', methods=['POST'])
-@login_required
 def run_training_job():
     """POST call for initiating retraining of models."""
     required_fields = ["data_version", "bucket_name", "github_repo", "ecosystem"]
@@ -71,7 +69,6 @@ def run_training_job():
 
 
 @app.route('/api/v1/versions', methods=['POST'])
-@login_required
 def version_details():
     """POST call to fetch model details."""
     required_fields = ["bucket_name", "ecosystem"]
