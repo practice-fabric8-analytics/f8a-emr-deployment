@@ -46,7 +46,6 @@ def liveness():
 
 
 @app.route('/api/v1/runjob', methods=['POST'])
-@login_required
 def run_training_job():
     """POST call for initiating retraining of models."""
     required_fields = ["data_version", "bucket_name", "github_repo", "ecosystem"]
@@ -71,7 +70,6 @@ def run_training_job():
 
 
 @app.route('/api/v1/versions', methods=['POST'])
-@login_required
 def version_details():
     """POST call to fetch model details."""
     required_fields = ["bucket_name", "ecosystem"]
