@@ -14,7 +14,12 @@ BODY: JSON data
 	"bucket_name": "hpf-insights",
 	"data_version":"20-12-13",
 	"github_repo": "https://github.com/ravsa/test-emr",
-	"ecosystem": "maven"
+	"ecosystem": "maven",
+	"hyper_params": {
+        "lower_limit": 1,
+        "upper_limit": 200,
+        "latent_factor": 300
+    }
 }
 ```
 
