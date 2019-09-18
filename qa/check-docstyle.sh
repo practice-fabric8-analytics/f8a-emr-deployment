@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Script to check all Python scripts for PEP-8 issues
+
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 directories="src tests tools"
 pass=0
@@ -12,18 +16,20 @@ function prepare_venv() {
     fi
     if [ $? -eq 1 ]; then
         # still don't have virtual environment -> use python3.6 directly
-        python3.6 -m venv venv && source venv/bin/activate && python3 "$(which pip3)" install vulture
+        python3.6 -m venv venv && source venv/bin/activate && python3 "$(which pip3)" install pydocstyle
     else
-        ${VIRTUALENV} -p python3 venv && source venv/bin/activate && python3 "$(which pip3)" install vulture
+        ${VIRTUALENV} -p python3 venv && source venv/bin/activate && python3 "$(which pip3)" install pydocstyle
     fi
 }
 
-# run the vulture for all files that are provided in $1
+pushd "${SCRIPT_DIR}/.."
+
+# run the pydocstyle for all files that are provided in $1
 function check_files() {
     for source in $1
     do
         echo "$source"
-        vulture --min-confidence 90 "$source"
+        pydocstyle --count "$source"
         if [ $? -eq 0 ]
         then
             echo "    Pass"
@@ -41,7 +47,7 @@ function check_files() {
 
 
 echo "----------------------------------------------------"
-echo "Checking source files for dead code and unused imports"
+echo "Checking documentation strings in all sources stored"
 echo "in following directories:"
 echo "$directories"
 echo "----------------------------------------------------"
@@ -58,11 +64,13 @@ do
 done
 
 
+popd
+
 if [ $fail -eq 0 ]
 then
     echo "All checks passed for $pass source files"
 else
     let total=$pass+$fail
-    echo "$fail source files out of $total files seems to contain dead code and/or unused imports"
+    echo "Documentation strings should be added and/or fixed in $fail source files out of $total files"
     exit 1
 fi

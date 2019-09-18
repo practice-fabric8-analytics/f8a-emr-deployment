@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Script to check all Python scripts for PEP-8 issues
+
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
 directories="src tests tools"
 pass=0
 fail=0
@@ -17,6 +21,8 @@ function prepare_venv() {
         ${VIRTUALENV} -p python3 venv && source venv/bin/activate && python3 "$(which pip3)" install pyflakes
     fi
 }
+
+pushd "${SCRIPT_DIR}/.."
 
 # run the pyflakes for all files that are provided in $1
 function check_files() {
@@ -57,6 +63,8 @@ do
 done
 
 
+popd
+
 if [ $fail -eq 0 ]
 then
     echo "All checks passed for $pass source files"
@@ -65,3 +73,4 @@ else
     echo "$fail source files out of $total files needs to be checked and fixed"
     exit 1
 fi
+
