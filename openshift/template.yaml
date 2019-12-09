@@ -36,13 +36,23 @@ objects:
               secretKeyRef:
                 key: s3-access-key-id
                 name: aws
-          - name: FLASK_LOGGING_LEVEL
-            value: ${FLASK_LOGGING_LEVEL}
           - name: AWS_S3_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 key: s3-secret-access-key
+                name: aws-emr
+          - name: AWS_EMR_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: aws_access_key_id
+                name: aws-emr
+          - name: AWS_EMR_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: aws_secret_access_key
                 name: aws
+          - name: FLASK_LOGGING_LEVEL
+            value: ${FLASK_LOGGING_LEVEL}
           - name: GITHUB_TOKEN
             valueFrom:
               secretKeyRef:
