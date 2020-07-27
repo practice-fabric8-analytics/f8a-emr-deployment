@@ -11,9 +11,9 @@ COPY ./requirements.txt /requirements.txt
 
 RUN pip3 install --upgrade pip
 
-RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-auth.git
+RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-auth.git@ad3dab5#egg=fabric8a_auth
 
-RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-rudra#egg=rudra
+RUN pip3 install git+https://github.com/fabric8-analytics/fabric8-analytics-rudra.git@e9a9239#egg=rudra
 
 RUN pip3 install -r requirements.txt
 
