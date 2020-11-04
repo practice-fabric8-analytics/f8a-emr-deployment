@@ -41,7 +41,7 @@ jobs:
           IMAGE_URL: ${{env.REGISTRY}}/${{env.REPOSITORY}}/${{env.FULL_NAME}}:${{env.DEFAULT_TAG}} 
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-           :v: [Image Build Successfull]( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"') '@$GITHUB_ACTOR', Avaliable at: ```'$IMAGE_URL'``` 
+           :v: [Image Build Successfull]( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"') '"@$GITHUB_ACTOR"', Avaliable at: ```'"$IMAGE_URL"'``` 
   
       - name: Create fail comment
         if: failure()
