@@ -23,7 +23,7 @@ jobs:
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-            :test_tube: [CI has Started Image Build]( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"')
+            :test_tube: [CI has Started Image Build]( https://github.com/${{GITHUB_REPOSITORY}}/actions/runs/${{GITHUB_RUN_ID}})
       - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
