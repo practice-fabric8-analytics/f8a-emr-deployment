@@ -18,6 +18,12 @@ jobs:
       - run: |
           git fetch origin +refs/pull/${{ github.event.client_payload.github.payload.issue.number }}/merge
           git checkout FETCH_HEAD
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          body: |
+            :test_tube: [CI has Started Image Build]( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"')
       - name: send comment 
         env:
           URL: ${{ github.event.client_payload.github.payload.issue.comments_url }}
