@@ -37,11 +37,12 @@ jobs:
       - name: Create success comment
         if: success()
         uses: peter-evans/create-or-update-comment@v1
+        env:
+          IMAGE_URL: ${{env.REGISTRY}}/${{env.REPOSITORY}}/${{env.FULL_NAME}}:${{env.DEFAULT_TAG}}
         with:
-          IMAGE_URL: ${{env.REGISTRY}}/${{env.REPOSITORY}}/${{env.FULL_NAME}}:${{env.DEFAULT_TAG}} 
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-           :v: [Image Build Successfull]( https://github.com/'"${{github.repository}}"'/actions/runs/'"${{github.run_id}}"') '"@${{github.actor}}"', Avaliable at: ```'"${{IMAGE_URL}}"'``` 
+           :v: [Image Build Successfull]( https://github.com/'"${{github.repository}}"'/actions/runs/'"${{github.run_id}}"') '"@${{github.actor}}"', Avaliable at: ```'"${{ env.IMAGE_URL }}"'``` 
   
       - name: Create fail comment
         if: failure()
