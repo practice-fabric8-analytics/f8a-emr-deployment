@@ -36,22 +36,15 @@ jobs:
         run: docker push ${{env.REGISTRY}}/${{env.REPOSITORY}}/${{env.FULL_NAME}}:${{env.DEFAULT_TAG}}
       - name: Create success comment
         if: success()
-        env:
-          URL: ${{ github.event.client_payload.github.payload.issue.comments_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUTHOR: ${{ github.event.client_payload.github.actor }}
-          IMAGE_URL: ${{env.REGISTRY}}/${{env.REPOSITORY}}/${{env.FULL_NAME}}:${{env.DEFAULT_TAG}}
         uses: peter-evans/create-or-update-comment@v1
         with:
+          IMAGE_URL: ${{env.REGISTRY}}/${{env.REPOSITORY}}/${{env.FULL_NAME}}:${{env.DEFAULT_TAG}} 
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
            :v: [Image Build Successfull]( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"') '"@$GITHUB_ACTOR"', Avaliable at: ```'"$IMAGE_URL"'``` 
   
       - name: Create fail comment
         if: failure()
-        env:
-          URL: ${{ github.event.client_payload.github.payload.issue.comments_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: peter-evans/create-or-update-comment@v1
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
