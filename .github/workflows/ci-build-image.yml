@@ -23,7 +23,7 @@ jobs:
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-            :test_tube: [CI has Started Image Build]( https://github.com/'"${{github.repository}}"'/actions/runs/'"${{GITHUB_RUN_ID}}"')
+            :test_tube: [CI has Started Image Build]( https://github.com/'"${{github.repository}}"'/actions/runs/'"${{github.run_id}}"')
       - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
@@ -41,7 +41,7 @@ jobs:
           IMAGE_URL: ${{env.REGISTRY}}/${{env.REPOSITORY}}/${{env.FULL_NAME}}:${{env.DEFAULT_TAG}} 
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-           :v: [Image Build Successfull]( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"') '"@$GITHUB_ACTOR"', Avaliable at: ```'"$IMAGE_URL"'``` 
+           :v: [Image Build Successfull]( https://github.com/'"${{github.repository}}"'/actions/runs/'"${{github.run_id}}"') '"@${{github.actor}}"', Avaliable at: ```'"${{IMAGE_URL}}"'``` 
   
       - name: Create fail comment
         if: failure()
@@ -49,5 +49,5 @@ jobs:
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-           :facepalm: [Build and Push Image Failed]( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"')
+           :facepalm: [Build and Push Image Failed]( https://github.com/'"${{github.repository}}"'/actions/runs/'"${{github.run_id}}"')
         
